@@ -1,0 +1,27 @@
+{
+  "name": "@dagdev/compiler",
+  "version": "1.0.0",
+  "description": "Solidity compiler wrapper for DagDev",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "solidity",
+    "compiler",
+    "dag"
+  ],
+  "author": "DagDev Team",
+  "license": "MIT",
+  "dependencies": {
+    "solc": "^0.8.19"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

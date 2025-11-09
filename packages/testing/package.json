@@ -1,0 +1,32 @@
+{
+  "name": "@dagdev/testing",
+  "version": "1.0.0",
+  "description": "DAG-aware testing framework with Mocha and Chai",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "dag",
+    "testing",
+    "mocha",
+    "chai"
+  ],
+  "author": "DagDev Team",
+  "license": "MIT",
+  "dependencies": {
+    "@dagdev/core": "^1.0.0",
+    "@dagdev/runtime": "^1.0.0",
+    "mocha": "^10.0.0",
+    "chai": "^4.3.0",
+    "@types/mocha": "^10.0.0",
+    "@types/chai": "^4.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

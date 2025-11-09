@@ -1,0 +1,38 @@
+{
+  "name": "dagdev",
+  "version": "1.0.0",
+  "description": "CLI tool for DagDev - Hardhat for BlockDAG Networks",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "dagdev": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "dag",
+    "blockdag",
+    "cli",
+    "hardhat",
+    "ethereum"
+  ],
+  "author": "DagDev Team",
+  "license": "MIT",
+  "dependencies": {
+    "@dagdev/core": "^1.0.0",
+    "@dagdev/runtime": "^1.0.0",
+    "@dagdev/testing": "^1.0.0",
+    "@dagdev/compiler": "^1.0.0",
+    "@dagdev/config": "^1.0.0",
+    "commander": "^11.0.0",
+    "chalk": "^4.1.2",
+    "ora": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

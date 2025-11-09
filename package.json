@@ -1,0 +1,46 @@
+{
+  "name": "dagdev-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DagDev - Hardhat for BlockDAG Networks",
+  "workspaces": [
+    "packages/*",
+    "cli"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "clean": "npm run clean --workspaces",
+    "dev": "npm run dev --workspaces --if-present",
+    "bootstrap": "npm install && npm run build"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.0.0",
+    "@types/node": "^20.19.24",
+    "jest": "^29.0.0",
+    "lerna": "^7.0.0",
+    "ts-jest": "^29.0.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/dagdev.git"
+  },
+  "keywords": [
+    "blockdag",
+    "dag",
+    "ethereum",
+    "evm",
+    "hardhat",
+    "blockchain",
+    "smart-contracts",
+    "developer-tools"
+  ],
+  "author": "DagDev Team",
+  "license": "MIT"
+}

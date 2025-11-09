@@ -1,0 +1,14 @@
+{
+  "version": "independent",
+  "npmClient": "npm",
+  "packages": ["packages/*", "cli"],
+  "command": {
+    "publish": {
+      "ignoreChanges": ["*.md", "test/**", "**/__tests__/**"],
+      "message": "chore(release): publish"
+    },
+    "bootstrap": {
+      "hoist": true
+    }
+  }
+}

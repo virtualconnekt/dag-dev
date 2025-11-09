@@ -1,0 +1,27 @@
+{
+  "name": "@dagdev/runtime",
+  "version": "1.0.0",
+  "description": "Dag Runtime Environment (DRE) - Helper APIs for scripts and tests",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "dag",
+    "blockdag",
+    "runtime",
+    "dre"
+  ],
+  "author": "DagDev Team",
+  "license": "MIT",
+  "dependencies": {
+    "@dagdev/core": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

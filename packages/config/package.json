@@ -1,0 +1,24 @@
+{
+  "name": "@dagdev/config",
+  "version": "1.0.0",
+  "description": "Configuration system for DagDev projects",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "dag",
+    "config",
+    "configuration"
+  ],
+  "author": "DagDev Team",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
