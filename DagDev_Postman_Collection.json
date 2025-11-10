@@ -1,0 +1,534 @@
+{
+  "info": {
+    "name": "DagDev API Tests",
+    "description": "Complete test suite for DagDev BlockDAG blockchain API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8545",
+      "type": "string"
+    },
+    {
+      "key": "jsonrpc",
+      "value": "2.0",
+      "type": "string"
+    },
+    {
+      "key": "test_account",
+      "value": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb1",
+      "type": "string"
+    },
+    {
+      "key": "recipient_account",
+      "value": "0x5AEDA56215b167893e80B4fE645BA6d5Bab767DE",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Basic Tests",
+      "item": [
+        {
+          "name": "Check Network Version",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"{{jsonrpc}}\",\n  \"id\": 1,\n  \"method\": \"net_version\",\n  \"params\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Network version is returned\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.jsonrpc).to.eql(\"2.0\");",
+                  "    pm.expect(jsonData.result).to.be.a('string');",
+                  "    console.log(\"Network version:\", jsonData.result);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Block Number",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"{{jsonrpc}}\",\n  \"id\": 1,\n  \"method\": \"eth_blockNumber\",\n  \"params\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Block number is returned in hex\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.result).to.match(/^0x[0-9a-f]+$/);",
+                  "    const blockNumber = parseInt(jsonData.result, 16);",
+                  "    console.log(\"Current block number:\", blockNumber);",
+                  "    pm.expect(blockNumber).to.be.at.least(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Chain ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"{{jsonrpc}}\",\n  \"id\": 1,\n  \"method\": \"eth_chainId\",\n  \"params\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Chain ID is correct\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const chainId = parseInt(jsonData.result, 16);",
+                  "    pm.expect(chainId).to.eql(1337);",
+                  "    console.log(\"Chain ID:\", chainId);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Account Tests",
+      "item": [
+        {
+          "name": "Get Account Balance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"{{jsonrpc}}\",\n  \"id\": 1,\n  \"method\": \"eth_getBalance\",\n  \"params\": [\n    \"{{test_account}}\",\n    \"latest\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Balance is returned\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.result).to.be.a('string');",
+                  "    const balanceWei = parseInt(jsonData.result, 16);",
+                  "    const balanceEth = balanceWei / 1e18;",
+                  "    console.log(`Balance: ${balanceWei} wei (${balanceEth} ETH)`);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Transaction Count",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"{{jsonrpc}}\",\n  \"id\": 1,\n  \"method\": \"eth_getTransactionCount\",\n  \"params\": [\n    \"{{test_account}}\",\n    \"latest\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Transaction count is returned\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const nonce = parseInt(jsonData.result, 16);",
+                  "    console.log(\"Account nonce:\", nonce);",
+                  "    pm.collectionVariables.set(\"current_nonce\", nonce);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Transaction Tests",
+      "item": [
+        {
+          "name": "Estimate Gas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"{{jsonrpc}}\",\n  \"id\": 1,\n  \"method\": \"eth_estimateGas\",\n  \"params\": [{\n    \"from\": \"{{test_account}}\",\n    \"to\": \"{{recipient_account}}\",\n    \"value\": \"0xde0b6b3a7640000\",\n    \"data\": \"0x\"\n  }]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Gas estimate is returned\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const gasEstimate = parseInt(jsonData.result, 16);",
+                  "    console.log(\"Estimated gas:\", gasEstimate);",
+                  "    pm.expect(gasEstimate).to.be.at.least(21000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Send Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"{{jsonrpc}}\",\n  \"id\": 1,\n  \"method\": \"eth_sendTransaction\",\n  \"params\": [{\n    \"from\": \"{{test_account}}\",\n    \"to\": \"{{recipient_account}}\",\n    \"value\": \"0xde0b6b3a7640000\",\n    \"gas\": \"0x5208\",\n    \"gasPrice\": \"0x3b9aca00\",\n    \"data\": \"0x\"\n  }]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Transaction hash is returned\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.result).to.match(/^0x[0-9a-f]{64}$/);",
+                  "    pm.collectionVariables.set(\"last_tx_hash\", jsonData.result);",
+                  "    console.log(\"Transaction submitted:\", jsonData.result);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Transaction Receipt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"{{jsonrpc}}\",\n  \"id\": 1,\n  \"method\": \"eth_getTransactionReceipt\",\n  \"params\": [\"{{last_tx_hash}}\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Transaction receipt exists\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.result) {",
+                  "        pm.expect(jsonData.result.status).to.eql(\"0x1\");",
+                  "        console.log(\"Transaction mined in block:\", jsonData.result.blockNumber);",
+                  "    } else {",
+                  "        console.log(\"Transaction pending...\");",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. DAG Tests",
+      "item": [
+        {
+          "name": "Get DAG Info",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"{{jsonrpc}}\",\n  \"id\": 1,\n  \"method\": \"dag_getDAGInfo\",\n  \"params\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"DAG info is valid\", function () {",
+                  "    const dag = pm.response.json().result;",
+                  "    pm.expect(dag.totalBlocks).to.be.a('number');",
+                  "    pm.expect(dag.blueRatio).to.be.at.least(0);",
+                  "    pm.expect(dag.blueRatio).to.be.at.most(100);",
+                  "    console.log(`Total: ${dag.totalBlocks}, Blue: ${dag.blueBlocks} (${dag.blueRatio}%)`);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Tips",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"{{jsonrpc}}\",\n  \"id\": 1,\n  \"method\": \"dag_getTips\",\n  \"params\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Tips are returned\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.result).to.be.an('array');",
+                  "    console.log(`Found ${jsonData.result.length} tips`);",
+                  "    if (jsonData.result.length > 0) {",
+                  "        pm.collectionVariables.set(\"sample_block_hash\", jsonData.result[0]);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Blue Set",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"{{jsonrpc}}\",\n  \"id\": 1,\n  \"method\": \"dag_getBlueSet\",\n  \"params\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Blue set is returned\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.result).to.be.an('array');",
+                  "    console.log(`Blue set contains ${jsonData.result.length} blocks`);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Contract Tests",
+      "item": [
+        {
+          "name": "Deploy Contract",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"{{jsonrpc}}\",\n  \"id\": 1,\n  \"method\": \"eth_sendTransaction\",\n  \"params\": [{\n    \"from\": \"{{test_account}}\",\n    \"data\": \"0x608060405234801561001057600080fd5b5060c78061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060325760003560e01c80632e64cec11460375780636057361d146051575b600080fd5b603d6069565b6040516048919060a0565b60405180910390f35b6067600480360381019060639190606b565b505050565b60005481565b600081359050606581608d565b92915050565b60006020828403121560805760006000fd5b600060878482850160588401565b91505092915050565b60008260ac91509190505600a165627a7a723058207d9c9e5c6d2e8eaaf47c1b5f5a9e8d7c6b5a4e3d2c1b0a9e8d7c6b5a4e3d2c0029\",\n    \"gas\": \"0x100000\"\n  }]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Contract deployment TX sent\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.result).to.match(/^0x[0-9a-f]{64}$/);",
+                  "    pm.collectionVariables.set(\"contract_deploy_tx\", jsonData.result);",
+                  "    console.log(\"Contract deployment TX:\", jsonData.result);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Contract Code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"{{jsonrpc}}\",\n  \"id\": 1,\n  \"method\": \"eth_getCode\",\n  \"params\": [\n    \"{{contract_address}}\",\n    \"latest\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}",
+              "host": ["{{base_url}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Contract code is deployed\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.result).to.not.eql(\"0x\");",
+                  "    console.log(`Contract code length: ${jsonData.result.length} characters`);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -299,3 +299,37 @@ export class LocalNode extends EventEmitter {
     return this.wsServer.getStats();
   }
 }
+
+// ========================================
+// Start node if this file is run directly
+// ========================================
+// Check if running directly (works with tsx/ts-node)
+const isMainModule = process.argv[1]?.includes('LocalNode');
+
+if (isMainModule) {
+  const node = new LocalNode({
+    port: 8545,
+    wsPort: 8546,
+    k: 18,
+    miningConfig: {
+      blockTime: 2000,      // Mine every 2 seconds
+      parallelism: 2,       // 2 parallel blocks per round
+    }
+  });
+
+  // Handle graceful shutdown
+  const shutdown = async () => {
+    console.log('\n\n🛑 Shutting down...');
+    await node.stop();
+    process.exit(0);
+  };
+
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
+
+  // Start the node
+  node.start().catch((error) => {
+    console.error('❌ Failed to start node:', error);
+    process.exit(1);
+  });
+}
