@@ -7,8 +7,11 @@
  * @phase Phase 5 - Testing Framework
  */
 
-export { DagTestRunner } from './DagTestRunner';
-export { dagMatchers } from './matchers/dagMatchers';
+export { DagTestRunner, TestRunnerConfig } from './DagTestRunner';
+export { dagMatchers, setGlobalNode } from './matchers/dagMatchers';
 
 // Test fixtures
 // export * from './fixtures/accounts';
+
+// Re-export Chai for convenience
+export { expect, use } from 'chai';

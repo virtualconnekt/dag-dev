@@ -45,14 +45,24 @@ export class MiningHelpers {
    */
   async mineParallel(count?: number): Promise<Block[]> {
     const miner = this.getMiner();
-    const parallelism = count || miner['parallelism'];
+    const dag = this.node.getDAG();
+    const config = miner.getConfig();
+    const parallelism = count || config.parallelism;
     
     const blocks: Block[] = [];
+    const tips = dag.getTips();
+    
+    // Mine blocks in parallel
     for (let i = 0; i < parallelism; i++) {
-      const block = await miner['mineBlock']();
-      if (block) {
-        blocks.push(block);
-      }
+      // Get pending transactions from pool
+      const txPool = this.node.getTransactionPool();
+      const transactions = txPool.getPending().slice(0, 10); // Max 10 txs per block
+      
+      // Use current tips as parents
+      const block = await miner.mineBlock(transactions, tips);
+      blocks.push(block);
+      
+      console.log(`  [MiningHelper] Mined block: ${block.header.hash.substring(0, 8)}...`);
     }
     
     return blocks;
@@ -65,8 +75,8 @@ export class MiningHelpers {
    * @returns Array of all mined blocks
    */
   async mineBlocks(count: number): Promise<Block[]> {
-    const miner = this.getMiner();
-    const parallelism = miner['parallelism'];
+    const config = this.getMiner().getConfig();
+    const parallelism = config.parallelism;
     const rounds = Math.ceil(count / parallelism);
     
     const allBlocks: Block[] = [];

@@ -12,12 +12,12 @@ export { DAGGraph } from './dag/DAGGraph';
 export { BlueSetAlgorithm } from './dag/BlueSetAlgorithm';
 export { Miner, MiningConfig } from './dag/Miner';
 
-// Phase 2 exports (to be implemented)
-// export { LocalNode } from './network/LocalNode';
-// export { RPCServer } from './network/RPCServer';
-// export { TransactionPool } from './network/TransactionPool';
-// export { WebSocketServer } from './network/WebSocketServer';
+// Phase 2 exports
+export { LocalNode } from './network/LocalNode';
+export { RPCServer } from './network/RPCServer';
+export { TransactionPool } from './network/TransactionPool';
+export { WebSocketServer } from './network/WebSocketServer';
 
-// Phase 3 exports (to be implemented)
-// export { EVMExecutor } from './evm/EVMExecutor';
-// export { StateManager } from './evm/StateManager';
+// Phase 3 exports
+export { EVMExecutor } from './evm/EVMExecutor';
+export { StateManager } from './evm/StateManager';
