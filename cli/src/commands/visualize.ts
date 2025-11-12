@@ -7,7 +7,7 @@
  * @phase Phase 7 - CLI Tool (Phase 8 - Visualizer)
  */
 
-export async function visualizeCommand(): Promise<void> {
+export async function visualizeCommand(options: { port?: number } = {}): Promise<void> {
   console.log('🌐 Opening DAG visualizer...');
 
   const url = 'http://localhost:3000';

@@ -10,7 +10,7 @@
 export { Block, BlockHeader, Transaction } from './dag/Block';
 export { DAGGraph } from './dag/DAGGraph';
 export { BlueSetAlgorithm } from './dag/BlueSetAlgorithm';
-export { Miner, MiningConfig } from './dag/Miner';
+export { Miner, MinerConfig } from './dag/Miner';
 
 // Phase 2 exports
 export { LocalNode } from './network/LocalNode';

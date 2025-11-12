@@ -8,13 +8,29 @@
  */
 
 /**
+ * Account configuration for network
+ */
+export interface AccountsConfig {
+  mnemonic?: string;        // BIP39 mnemonic phrase
+  privateKeys?: string[];   // Array of private keys
+  path?: string;            // HD derivation path (default: "m/44'/60'/0'/0")
+  count?: number;           // Number of accounts to derive from mnemonic
+}
+
+/**
  * Network configuration
  */
 export interface NetworkConfig {
-  url: string;           // RPC endpoint URL
-  chainId?: number;      // Chain ID
-  accounts?: string[];   // Private keys for accounts
-  timeout?: number;      // Request timeout
+  rpcUrl?: string;          // HTTP RPC endpoint URL (for compatibility)
+  url?: string;             // Alias for rpcUrl
+  wsUrl?: string;           // WebSocket endpoint URL
+  chainId: number;          // Chain ID
+  accounts?: AccountsConfig | 'hardhat' | string[];  // Account configuration
+  timeout?: number;         // Request timeout in ms
+  gasPrice?: number | 'auto'; // Gas price in wei or 'auto'
+  gasMultiplier?: number;   // Gas price multiplier (default: 1.0)
+  confirmations?: number;   // Number of confirmations to wait
+  explorer?: string;        // Block explorer URL
 }
 
 /**

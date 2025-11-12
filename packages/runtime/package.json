@@ -19,7 +19,10 @@
   "author": "DagDev Team",
   "license": "MIT",
   "dependencies": {
-    "@dagdev/core": "^1.0.0"
+    "@dagdev/core": "^1.0.0",
+    "@ethereumjs/tx": "^5.4.0",
+    "@ethereumjs/util": "^9.1.0",
+    "@ethereumjs/common": "^4.4.0"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

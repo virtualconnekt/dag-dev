@@ -2,8 +2,8 @@
   "name": "@dagdev/testing",
   "version": "1.0.0",
   "description": "DAG-aware testing framework with Mocha and Chai",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "jest",

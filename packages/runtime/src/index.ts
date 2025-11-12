@@ -2,14 +2,15 @@
  * index.ts
  * 
  * Main entry point for @dagdev/runtime package.
- * Exports runtime environment and helper functions.
+ * Exports the Dag Runtime Environment (DRE).
  * 
  * @phase Phase 4 - Runtime Environment (DRE)
  */
 
 export { DagRuntime } from './DagRuntime';
-
-// Helper modules
-export * as dag from './helpers/dag';
-export * as evm from './helpers/evm';
-export * as mining from './helpers/mining';
+export { RPCNodeClient } from './RPCNodeClient';
+export { AccountManager } from './AccountManager';
+export type { Account } from './AccountManager';
+export * from './helpers/dag';
+export * from './helpers/evm';
+export * from './helpers/mining';

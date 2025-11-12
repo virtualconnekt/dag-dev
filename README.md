@@ -1,6 +1,6 @@
 # 🚀 DagDev
 
-> **Hardhat for BlockDAG Networks** - A complete developer toolkit for building on BlockDAG
+> **Development Framework For BlockDAG Network** - A complete developer toolkit for building on BlockDAG
 
 [![npm version](https://badge.fury.io/js/dagdev.svg)](https://www.npmjs.com/package/dagdev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

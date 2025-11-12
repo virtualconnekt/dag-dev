@@ -11,10 +11,10 @@
  * - Error formatting
  * - Multiple Solidity versions support
  * 
- * @phase Phase 9 - Compiler Integration
+ * @phase Phase 7 - CLI Tool
  */
 
-// import solc from 'solc';
+import solc from 'solc';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -83,21 +83,63 @@ export class SolidityCompiler {
       return { contracts: {} };
     }
 
+    console.log(`📁 Found ${solFiles.length} Solidity file(s)`);
+
     // Create compiler input
     const input = this.createCompilerInput(solFiles);
 
-    // Compile (mock for scaffolding)
-    // TODO: Implement actual compilation with solc
-    const output: CompilerOutput = {
-      contracts: {},
-    };
+    // Compile with solc
+    try {
+      const inputJSON = JSON.stringify(input);
+      
+      const outputJSON = solc.compile(inputJSON, {
+        import: (importPath: string) => {
+          // Handle imports (e.g., OpenZeppelin contracts)
+          try {
+            // Try to find in node_modules
+            const possiblePaths = [
+              path.join(process.cwd(), 'node_modules', importPath),
+              path.join(this.sourcesPath, importPath),
+            ];
 
-    console.log(`✅ Compiled ${solFiles.length} contracts`);
-    
-    // Save artifacts
-    await this.saveArtifacts(output);
+            for (const tryPath of possiblePaths) {
+              if (fs.existsSync(tryPath)) {
+                const content = fs.readFileSync(tryPath, 'utf-8');
+                return { contents: content };
+              }
+            }
 
-    return output;
+            return { error: `File not found: ${importPath}` };
+          } catch (error: any) {
+            return { error: error.message };
+          }
+        },
+      });
+
+      const output: CompilerOutput = JSON.parse(outputJSON);
+
+      // Check for errors
+      if (output.errors) {
+        const hasErrors = output.errors.some((err: any) => err.severity === 'error');
+        if (hasErrors) {
+          console.error('❌ Compilation failed with errors');
+          return output;
+        }
+      }
+
+      console.log(`✅ Compilation successful`);
+      
+      // Save artifacts
+      await this.saveArtifacts(output);
+
+      return output;
+    } catch (error: any) {
+      console.error('❌ Compilation failed:', error.message);
+      return {
+        contracts: {},
+        errors: [{ severity: 'error', message: error.message }],
+      };
+    }
   }
 
   /**

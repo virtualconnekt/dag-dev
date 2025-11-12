@@ -7,9 +7,7 @@
  * @phase Phase 4 - Runtime Environment (DRE)
  */
 
-import { EVMExecutor } from '@dagdev/core/src/evm/EVMExecutor';
-import { Transaction } from '@dagdev/core/src/dag/Block';
-import { LocalNode } from '@dagdev/core/src/network/LocalNode';
+import { EVMExecutor, Transaction, LocalNode } from '@dagdev/core';
 
 /**
  * EVM Helper Class
@@ -17,28 +15,62 @@ import { LocalNode } from '@dagdev/core/src/network/LocalNode';
  */
 export class EVMHelpers {
   constructor(
-    private getEVM: () => EVMExecutor,
-    private node: LocalNode
+    private getEVM: (() => EVMExecutor) | null,
+    private node: LocalNode | any
   ) {}
+
+  /**
+   * Get the EVM executor (only for LocalNode, not RPC)
+   */
+  private getEVMExecutor(): EVMExecutor {
+    if (!this.getEVM) {
+      throw new Error('EVM executor not available (RPC client mode)');
+    }
+    return this.getEVMExecutor();
+  }
+
+  /**
+   * Get accounts (works with both LocalNode and RPC)
+   */
+  async getAccounts(): Promise<string[]> {
+    // Check if this is an RPC client
+    if (this.node.getAccounts) {
+      return await this.node.getAccounts();
+    }
+    
+    // Default local accounts
+    return [
+      '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0',
+      '0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed',
+      '0xfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359'
+    ];
+  }
 
   /**
    * Deploy a smart contract
    * 
    * @param bytecode - Contract bytecode (hex string with 0x prefix)
    * @param from - Deployer address
-   * @param value - ETH to send with deployment (default: 0)
+   * @param options - Deployment options
    * @returns Contract address and transaction hash
    */
   async deploy(
     bytecode: string,
     from: string = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0',
-    value: bigint = BigInt(0)
+    options: any = {}
   ): Promise<{
     address: string;
     transactionHash: string;
     gasUsed: bigint;
   }> {
-    const evm = this.getEVM();
+    // Check if this is an RPC client
+    if (this.node.deployContract) {
+      return await this.node.deployContract(bytecode, from, options);
+    }
+    
+    // Local deployment
+    const evm = this.getEVMExecutor();
+    const value = options.value || BigInt(0);
     
     // Ensure bytecode has 0x prefix
     if (!bytecode.startsWith('0x')) {
@@ -57,7 +89,7 @@ export class EVMHelpers {
       value,
       data: bytecode,
       nonce: Number(await evm.getNonce(from)),
-      gasLimit: BigInt(5000000),
+      gasLimit: BigInt(options.gasLimit || 5000000),
       gasPrice: BigInt('1000000000')
     };
 
@@ -75,54 +107,62 @@ export class EVMHelpers {
   }
 
   /**
-   * Call a contract method (read-only, no state change)
-   * 
-   * @param to - Contract address
-   * @param data - Encoded function call data
-   * @param from - Caller address
-   * @param value - ETH to send
-   * @returns Return data from the call
-   */
-  async call(
-    to: string,
-    data: string = '0x',
-    from?: string,
-    value?: bigint
-  ): Promise<string> {
-    const evm = this.getEVM();
-    const result = await evm.call(to, data, from, value);
-    
-    // Convert Uint8Array to hex string
-    return '0x' + Buffer.from(result).toString('hex');
-  }
-
-  /**
    * Send a transaction (state-changing)
-   * 
-   * @param tx - Transaction object
-   * @returns Transaction hash
    */
-  async sendTransaction(tx: Partial<Transaction>): Promise<string> {
-    // Generate transaction hash
+  async sendTransaction(tx: any): Promise<any> {
+    // Check if this is an RPC client
+    if (this.node.sendTransaction) {
+      return await this.node.sendTransaction(tx);
+    }
+    
+    // Local transaction
+    const evm = this.getEVMExecutor();
     const txHash = '0x' + Array(64).fill(0).map(() => 
       Math.floor(Math.random() * 16).toString(16)
     ).join('');
 
-    const fullTx: Transaction = {
+    const transaction: Transaction = {
       hash: txHash,
-      from: tx.from || '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0',
+      from: tx.from,
       to: tx.to || '',
       value: tx.value || BigInt(0),
       data: tx.data || '0x',
-      nonce: tx.nonce ?? 0,
-      gasLimit: tx.gasLimit || BigInt(200000),
-      gasPrice: tx.gasPrice || BigInt('1000000000')
+      nonce: Number(await evm.getNonce(tx.from)),
+      gasLimit: BigInt(tx.gasLimit || 21000),
+      gasPrice: BigInt(tx.gasPrice || '1000000000')
     };
 
-    // Add to transaction pool
-    this.node.addTransaction(fullTx);
+    await evm.executeTransaction(transaction, 'latest');
+    this.node.addTransaction(transaction);
     
-    return txHash;
+    return {
+      hash: txHash
+    };
+  }
+
+  /**
+   * Call a contract method (read-only, no state change)
+   * 
+   * @param params - Call parameters
+   * @returns Return data from the call
+   */
+  async call(params: any): Promise<string> {
+    // Check if this is an RPC client
+    if (this.node.callContract) {
+      return await this.node.callContract(params);
+    }
+    
+    // Local call
+    const evm = this.getEVMExecutor();
+    const result = await evm.call(
+      params.to,
+      params.data || '0x',
+      params.from,
+      params.value
+    );
+    
+    // Convert Uint8Array to hex string
+    return '0x' + Buffer.from(result).toString('hex');
   }
 
   /**
@@ -132,7 +172,7 @@ export class EVMHelpers {
    * @returns Balance in wei
    */
   async getBalance(address: string): Promise<bigint> {
-    const evm = this.getEVM();
+    const evm = this.getEVMExecutor();
     return evm.getBalance(address);
   }
 
@@ -143,7 +183,7 @@ export class EVMHelpers {
    * @param balance - Balance in wei
    */
   async setBalance(address: string, balance: bigint): Promise<void> {
-    const evm = this.getEVM();
+    const evm = this.getEVMExecutor();
     await evm.setBalance(address, balance);
   }
 
@@ -154,7 +194,7 @@ export class EVMHelpers {
    * @returns Current nonce
    */
   async getNonce(address: string): Promise<number> {
-    const evm = this.getEVM();
+    const evm = this.getEVMExecutor();
     return Number(evm.getNonce(address));
   }
 
@@ -165,7 +205,7 @@ export class EVMHelpers {
    * @returns Contract bytecode
    */
   async getCode(address: string): Promise<string> {
-    const evm = this.getEVM();
+    const evm = this.getEVMExecutor();
     const code = await evm.getCode(address);
     return '0x' + Buffer.from(code).toString('hex');
   }
@@ -178,7 +218,7 @@ export class EVMHelpers {
    * @returns Storage value
    */
   async getStorageAt(address: string, position: string): Promise<string> {
-    const evm = this.getEVM();
+    const evm = this.getEVMExecutor();
     const value = await evm.getStorageAt(address, position);
     return '0x' + Buffer.from(value).toString('hex');
   }
@@ -190,7 +230,7 @@ export class EVMHelpers {
    * @returns Estimated gas
    */
   async estimateGas(tx: Partial<Transaction>): Promise<bigint> {
-    const evm = this.getEVM();
+    const evm = this.getEVMExecutor();
     
     const fullTx: Transaction = {
       hash: '0x0',
@@ -223,7 +263,7 @@ export class EVMHelpers {
    * @returns State root hash
    */
   async getStateRoot(): Promise<string> {
-    const evm = this.getEVM();
+    const evm = this.getEVMExecutor();
     return evm.getStateRootHex();
   }
 
@@ -231,7 +271,7 @@ export class EVMHelpers {
    * Create a checkpoint (for testing - allows revert)
    */
   async checkpoint(): Promise<void> {
-    const evm = this.getEVM();
+    const evm = this.getEVMExecutor();
     await evm.checkpoint();
   }
 
@@ -239,7 +279,7 @@ export class EVMHelpers {
    * Commit a checkpoint
    */
   async commit(): Promise<void> {
-    const evm = this.getEVM();
+    const evm = this.getEVMExecutor();
     await evm.commit();
   }
 
@@ -247,7 +287,7 @@ export class EVMHelpers {
    * Revert to last checkpoint
    */
   async revert(): Promise<void> {
-    const evm = this.getEVM();
+    const evm = this.getEVMExecutor();
     await evm.revert();
   }
 

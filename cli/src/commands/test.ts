@@ -16,7 +16,13 @@ import * as fs from 'fs';
 // Register DAG matchers
 use(dagMatchers);
 
-export async function testCommand(files: string[]): Promise<void> {
+interface TestOptions {
+  network?: string;
+  grep?: string;
+  timeout?: number;
+}
+
+export async function testCommand(files: string[], options: TestOptions = {}): Promise<void> {
   console.log('🧪 Running DagDev tests...\n');
 
   // Find test files

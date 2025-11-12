@@ -132,7 +132,7 @@ export class RPCServer {
     this.app.use(bodyParser.json());
     
     // Log requests
-    this.app.use((req, res, next) => {
+    this.app.use((req, _res, next) => {
       if (req.body?.method) {
         console.log(`[RPC] ${req.body.method}`);
       }
@@ -141,14 +141,14 @@ export class RPCServer {
   }
 
   /**
-   * Setup Express routes
+   * Setup API routes
    */
   private setupRoutes(): void {
     // Main JSON-RPC endpoint
     this.app.post('/', (req, res) => this.handleJsonRpc(req, res));
     
     // Health check
-    this.app.get('/health', (req, res) => {
+    this.app.get('/health', (_req, res) => {
       res.json({
         status: 'ok',
         node: this.node.isNodeRunning() ? 'running' : 'stopped',
@@ -161,10 +161,18 @@ export class RPCServer {
    * Initialize mock data for testing
    */
   private initializeMockData(): void {
-    // Mock balances for testing
-    this.mockBalances.set('0x0000000000000000000000000000000000000000', BigInt(0));
+    // Mock balances for testing - Standard Hardhat test accounts
+    // Each pre-funded with 10,000 ETH for development
     this.mockBalances.set('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266', BigInt('10000000000000000000000')); // 10000 ETH
     this.mockBalances.set('0x70997970C51812dc3A010C7d01b50e0d17dc79C8', BigInt('10000000000000000000000'));
+    this.mockBalances.set('0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC', BigInt('10000000000000000000000'));
+    this.mockBalances.set('0x90F79bf6EB2c4f870365E785982E1f101E93b906', BigInt('10000000000000000000000'));
+    this.mockBalances.set('0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65', BigInt('10000000000000000000000'));
+    this.mockBalances.set('0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', BigInt('10000000000000000000000'));
+    this.mockBalances.set('0x976EA74026E726554dB657fA54763abd0C3a0aa9', BigInt('10000000000000000000000'));
+    this.mockBalances.set('0x14dC79964da2C08b23698B3D3cc7Ca32193d9955', BigInt('10000000000000000000000'));
+    this.mockBalances.set('0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f', BigInt('10000000000000000000000'));
+    this.mockBalances.set('0xa0Ee7A142d267C1f36714E4a8F75612F20a79720', BigInt('10000000000000000000000'));
   }
 
   /**
@@ -553,7 +561,7 @@ export class RPCServer {
   /**
    * Handle net_* methods
    */
-  private async handleNetMethod(method: string, params: any[]): Promise<any> {
+  private async handleNetMethod(method: string, _params: any[]): Promise<any> {
     switch (method) {
       case 'net_version':
         return this.chainId.toString();
@@ -617,7 +625,8 @@ export class RPCServer {
    */
   private createMockTransaction(params: any): Transaction {
     const from = params.from || '0x0000000000000000000000000000000000000000';
-    const to = params.to || '0x0000000000000000000000000000000000000000';
+    // For contract deployment, to should be empty string, not zero address
+    const to = params.to || '';
     const value = this.parseBigInt(params.value || '0x0');
     const gasPrice = this.parseBigInt(params.gasPrice || '0x3b9aca00'); // 1 gwei
     const gasLimit = this.parseBigInt(params.gas || '0x5208'); // 21000

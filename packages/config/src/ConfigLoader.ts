@@ -70,14 +70,14 @@ export class ConfigLoader {
 
   /**
    * Find config file in project directory
-   * Looks for dagdev.config.ts, dagdev.config.js, dagdev.config.json
+   * Looks for dagdev.config.js (preferred), then .ts, .cjs, .mjs, .json
    */
   private static findConfigFile(projectPath: string): string | null {
     const configNames = [
-      'dagdev.config.ts',
-      'dagdev.config.js',
+      'dagdev.config.js',   // Preferred - works without transpilation
       'dagdev.config.cjs',
       'dagdev.config.mjs',
+      'dagdev.config.ts',   // Requires transpilation
       'dagdev.config.json',
     ];
 
@@ -94,7 +94,7 @@ export class ConfigLoader {
   /**
    * Load configuration file (supports .ts, .js, .json)
    */
-  private static async loadConfigFile(configPath: string, projectPath: string): Promise<UserConfig> {
+  private static async loadConfigFile(configPath: string, _projectPath: string): Promise<UserConfig> {
     const ext = path.extname(configPath);
 
     if (ext === '.json') {
@@ -104,7 +104,25 @@ export class ConfigLoader {
       return this.substituteEnvVars(parsed);
     }
 
-    // For .ts, .js, .mjs, .cjs - use dynamic import
+    // For .js, .cjs - use require (CommonJS)
+    if (ext === '.js' || ext === '.cjs') {
+      try {
+        // Clear require cache to allow hot reload
+        delete require.cache[require.resolve(configPath)];
+        const config = require(configPath);
+        
+        if (typeof config === 'function') {
+          // Support function configs: module.exports = (env) => ({ ... })
+          return this.substituteEnvVars(config(process.env));
+        }
+        
+        return this.substituteEnvVars(config);
+      } catch (error: any) {
+        throw new Error(`Failed to load config file: ${error.message}`);
+      }
+    }
+
+    // For .ts, .mjs - use dynamic import
     try {
       // Convert to file:// URL for import
       const fileUrl = `file://${configPath}`;
@@ -165,18 +183,18 @@ export class ConfigLoader {
       paths: {
         ...this.DEFAULT_CONFIG.paths,
         ...userConfig.paths,
-      },
+      } as any,
       defaultNetwork: userConfig.defaultNetwork || this.DEFAULT_CONFIG.defaultNetwork,
     };
 
     // Resolve paths to absolute
     if (config.paths) {
       config.paths = {
-        sources: path.resolve(projectPath, config.paths.sources),
-        tests: path.resolve(projectPath, config.paths.tests),
-        cache: path.resolve(projectPath, config.paths.cache),
-        artifacts: path.resolve(projectPath, config.paths.artifacts),
-        scripts: path.resolve(projectPath, config.paths.scripts),
+        sources: path.resolve(projectPath, config.paths.sources || './contracts'),
+        tests: path.resolve(projectPath, config.paths.tests || './test'),
+        cache: path.resolve(projectPath, config.paths.cache || './cache'),
+        artifacts: path.resolve(projectPath, config.paths.artifacts || './artifacts'),
+        scripts: path.resolve(projectPath, config.paths.scripts || './scripts'),
       };
     }
 
@@ -196,11 +214,16 @@ export class ConfigLoader {
     for (const [name, network] of Object.entries(config.networks)) {
       if (!network) continue;
       
-      if (!network.url) {
-        throw new Error(`Network "${name}" must have a URL`);
+      // Check for either url or rpcUrl (for backwards compatibility)
+      if (!network.url && !network.rpcUrl) {
+        throw new Error(`Network "${name}" must have a URL or rpcUrl`);
       }
 
-      if (network.chainId !== undefined && typeof network.chainId !== 'number') {
+      if (!network.chainId) {
+        throw new Error(`Network "${name}" must have a chainId`);
+      }
+
+      if (typeof network.chainId !== 'number') {
         throw new Error(`Network "${name}" chainId must be a number`);
       }
     }

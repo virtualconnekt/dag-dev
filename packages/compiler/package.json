@@ -18,10 +18,10 @@
   "author": "DagDev Team",
   "license": "MIT",
   "dependencies": {
-    "solc": "^0.8.19"
+    "solc": "^0.8.30"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
-    "@types/node": "^20.0.0"
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
   }
 }

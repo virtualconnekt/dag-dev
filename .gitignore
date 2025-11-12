@@ -22,6 +22,14 @@ build/
 out/
 .eslintcache
 
+# Compiled TypeScript files in src directories
+packages/*/src/**/*.js
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts.map
+!packages/*/src/**/*.test.js
+!packages/*/src/**/*.spec.js
+
 # ==================== Testing ====================
 coverage/
 .nyc_output/

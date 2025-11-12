@@ -7,8 +7,7 @@
  * @phase Phase 4 - Runtime Environment (DRE)
  */
 
-import { DAGGraph } from '@dagdev/core/src/dag/DAGGraph';
-import { Block } from '@dagdev/core/src/dag/Block';
+import { DAGGraph, Block } from '@dagdev/core';
 
 /**
  * DAG Helper Class

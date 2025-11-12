@@ -7,9 +7,7 @@
  * @phase Phase 4 - Runtime Environment (DRE)
  */
 
-import { Miner } from '@dagdev/core/src/dag/Miner';
-import { LocalNode } from '@dagdev/core/src/network/LocalNode';
-import { Block } from '@dagdev/core/src/dag/Block';
+import { Miner, LocalNode, Block } from '@dagdev/core';
 
 /**
  * Mining Helper Class
@@ -28,7 +26,11 @@ export class MiningHelpers {
    */
   async mineSingleBlock(): Promise<Block> {
     const miner = this.getMiner();
-    const block = await miner['mineBlock']();
+    const dag = this.node.getDAG();
+    const tips = dag.getTips();
+    const parents = tips.slice(0, miner.getConfig().maxParents);
+    
+    const block = await miner['mineBlock']([], parents);
     
     if (!block) {
       throw new Error('Failed to mine block');
@@ -168,14 +170,16 @@ export class MiningHelpers {
    * Start automatic mining
    */
   startMining(): void {
-    this.node.startMining();
+    const miner = this.getMiner();
+    miner.startMining();
   }
 
   /**
    * Stop automatic mining
    */
   stopMining(): void {
-    this.node.stopMining();
+    const miner = this.getMiner();
+    miner.stopMining();
   }
 
   /**
@@ -183,7 +187,7 @@ export class MiningHelpers {
    */
   isMining(): boolean {
     const stats = this.node.getStats();
-    return stats.isMining;
+    return stats.miner.isRunning;
   }
 
   /**
@@ -193,16 +197,17 @@ export class MiningHelpers {
     isMining: boolean;
     parallelism: number;
     totalBlocks: number;
-    miningInterval: number;
+    blocksMined: number;
   } {
     const miner = this.getMiner();
     const stats = this.node.getStats();
+    const config = miner.getConfig();
     
     return {
-      isMining: stats.isMining,
-      parallelism: miner['parallelism'],
-      totalBlocks: stats.totalBlocks,
-      miningInterval: miner['miningInterval']
+      isMining: stats.miner.isRunning,
+      parallelism: config.parallelism,
+      totalBlocks: stats.dag.totalBlocks,
+      blocksMined: stats.miner.blocksMined
     };
   }
 
@@ -230,16 +235,32 @@ export class MiningHelpers {
    */
   async waitForBlocks(count: number, timeout: number = 30000): Promise<void> {
     const startTime = Date.now();
-    const startBlocks = this.node.getStats().totalBlocks;
-    const targetBlocks = startBlocks + count;
     
-    while (Date.now() - startTime < timeout) {
-      const currentBlocks = this.node.getStats().totalBlocks;
-      if (currentBlocks >= targetBlocks) {
-        return;
-      }
+    // Check if this is an RPC client
+    if ((this.node as any).rpc) {
+      // Use RPC method for remote node
+      const startBlock = parseInt(await (this.node as any).rpc('eth_blockNumber', []), 16);
+      const targetBlock = startBlock + count;
       
-      await new Promise(resolve => setTimeout(resolve, 100));
+      while (Date.now() - startTime < timeout) {
+        const currentBlock = parseInt(await (this.node as any).rpc('eth_blockNumber', []), 16);
+        if (currentBlock >= targetBlock) {
+          return;
+        }
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    } else {
+      // Use local node stats
+      const startBlocks = this.node.getStats().dag.totalBlocks;
+      const targetBlocks = startBlocks + count;
+      
+      while (Date.now() - startTime < timeout) {
+        const currentBlocks = this.node.getStats().dag.totalBlocks;
+        if (currentBlocks >= targetBlocks) {
+          return;
+        }
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
     }
     
     throw new Error(`Timeout waiting for ${count} blocks after ${timeout}ms`);

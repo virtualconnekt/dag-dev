@@ -16,7 +16,6 @@
  */
 
 import { WebSocketServer as WSServer, WebSocket } from 'ws';
-import { Server as HttpServer } from 'http';
 import { LocalNode } from './LocalNode';
 import { Block, Transaction } from '../dag/Block';
 

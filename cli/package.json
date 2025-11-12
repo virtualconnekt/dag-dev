@@ -8,8 +8,9 @@
     "dagdev": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "npm run clean && esbuild src/index.ts --bundle --platform=node --target=node18 --outfile=dist/index.js --external:mocha --external:chai --external:@types/mocha --external:@types/chai --external:solc --external:@dagdev/runtime --external:@dagdev/core --format=cjs --banner:js=\"#!/usr/bin/env node\"",
+    "build:types": "tsc --emitDeclarationOnly",
+    "dev": "tsx src/index.ts",
     "clean": "rm -rf dist"
   },
   "keywords": [
@@ -22,17 +23,20 @@
   "author": "DagDev Team",
   "license": "MIT",
   "dependencies": {
+    "@dagdev/compiler": "^1.0.0",
+    "@dagdev/config": "^1.0.0",
     "@dagdev/core": "^1.0.0",
     "@dagdev/runtime": "^1.0.0",
     "@dagdev/testing": "^1.0.0",
-    "@dagdev/compiler": "^1.0.0",
-    "@dagdev/config": "^1.0.0",
-    "commander": "^11.0.0",
     "chalk": "^4.1.2",
-    "ora": "^5.4.1"
+    "commander": "^11.0.0",
+    "dotenv": "^16.0.0",
+    "ora": "^5.4.1",
+    "solc": "^0.8.30"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "esbuild": "^0.27.0",
     "typescript": "^5.0.0"
   }
 }
