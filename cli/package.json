@@ -10,8 +10,20 @@
   "scripts": {
     "build": "npm run clean && esbuild src/index.ts --bundle --platform=node --target=node18 --outfile=dist/index.js --external:mocha --external:chai --external:@types/mocha --external:@types/chai --external:solc --external:@dagdev/runtime --external:@dagdev/core --format=cjs --banner:js=\"#!/usr/bin/env node\"",
     "build:types": "tsc --emitDeclarationOnly",
+    "build:exe": "npm run build && pkg dist/index.js --targets node18-linux-x64,node18-macos-x64,node18-win-x64 --output dist/executables/dagdev --compress GZip",
     "dev": "tsx src/index.ts",
     "clean": "rm -rf dist"
+  },
+  "pkg": {
+    "targets": [
+      "node18-linux-x64",
+      "node18-macos-x64",
+      "node18-win-x64"
+    ],
+    "outputPath": "dist/executables",
+    "assets": [
+      "node_modules/solc/**/*"
+    ]
   },
   "keywords": [
     "dag",
