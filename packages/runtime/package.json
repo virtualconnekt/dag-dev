@@ -14,10 +14,20 @@
     "dag",
     "blockdag",
     "runtime",
-    "dre"
+    "dre",
+    "blockchain"
   ],
   "author": "DagDev Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/virtualconnekt/dag-dev.git",
+    "directory": "packages/runtime"
+  },
+  "bugs": {
+    "url": "https://github.com/virtualconnekt/dag-dev/issues"
+  },
+  "homepage": "https://github.com/virtualconnekt/dag-dev#readme",
   "dependencies": {
     "@dagdev/core": "^1.0.0",
     "@ethereumjs/tx": "^5.4.0",

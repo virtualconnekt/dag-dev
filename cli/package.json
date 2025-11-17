@@ -30,10 +30,28 @@
     "blockdag",
     "cli",
     "hardhat",
-    "ethereum"
+    "ethereum",
+    "evm",
+    "smart-contracts",
+    "blockchain",
+    "development-tools"
   ],
   "author": "DagDev Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/virtualconnekt/dag-dev.git",
+    "directory": "cli"
+  },
+  "bugs": {
+    "url": "https://github.com/virtualconnekt/dag-dev/issues"
+  },
+  "homepage": "https://github.com/virtualconnekt/dag-dev#readme",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "@dagdev/compiler": "^1.0.0",
     "@dagdev/config": "^1.0.0",

@@ -1,0 +1,23 @@
+# Tests
+test/
+tests/
+*.test.*
+*.spec.*
+
+# Development
+tsconfig.json
+.eslintrc*
+
+# Documentation
+*.md
+!README.md
+
+# Build
+*.tgz
+
+# Other
+.git/
+.gitignore
+.vscode/
+coverage/
+*.log

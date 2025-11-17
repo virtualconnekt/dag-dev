@@ -1,0 +1,30 @@
+# Source TypeScript (we publish compiled dist/)
+src/**/*.ts
+!src/**/*.d.ts
+
+# Tests
+test/
+tests/
+*.test.*
+*.spec.*
+
+# Demo files
+demo/
+
+# Development
+tsconfig.json
+.eslintrc*
+
+# Documentation
+*.md
+!README.md
+
+# Build
+*.tgz
+
+# Other
+.git/
+.gitignore
+.vscode/
+coverage/
+*.log

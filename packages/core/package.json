@@ -14,10 +14,20 @@
     "dag",
     "blockdag",
     "blockchain",
-    "simulator"
+    "simulator",
+    "evm"
   ],
   "author": "DagDev Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/virtualconnekt/dag-dev.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/virtualconnekt/dag-dev/issues"
+  },
+  "homepage": "https://github.com/virtualconnekt/dag-dev#readme",
   "dependencies": {
     "@ethereumjs/block": "^10.1.0",
     "@ethereumjs/common": "^10.1.0",

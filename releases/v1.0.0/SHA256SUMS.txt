@@ -1,0 +1,3 @@
+a6f5faa74b3d10d6f60e750fc6f82c0fc04da4d312c0245e8d4c9a49eb3f05c7  dagdev-linux
+d4ab7ddc6595fe01e17e8e56aee951fa2035d7e9ae2c2d49444589bdd7029311  dagdev-macos
+5ae44983626a149645190fa0d46daabb7deaebdce7c94eb1a94b1b7e834df722  dagdev-win.exe

@@ -1,0 +1,42 @@
+# Source files (we publish compiled dist/)
+src/**/*.ts
+!src/**/*.d.ts
+
+# Tests
+test/
+tests/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+**/*.test.ts
+**/*.spec.ts
+
+# Development files
+tsconfig.json
+.eslintrc*
+.prettierrc*
+test-runner.js
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Build artifacts
+*.tgz
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Coverage
+coverage/
+.nyc_output/

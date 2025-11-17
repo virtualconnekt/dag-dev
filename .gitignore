@@ -9,6 +9,8 @@ documentation/
 !LICENSE.md
 !CONTRIBUTING.md
 !CHANGELOG.md
+# Exception: Keep release documentation
+!releases/**/*.md
 
 # ==================== Dependencies ====================
 node_modules/
@@ -21,6 +23,11 @@ build/
 *.tsbuildinfo
 out/
 .eslintcache
+
+# Release binaries (too large for git, hosted externally)
+releases/*/dagdev-linux
+releases/*/dagdev-macos
+releases/*/dagdev-win.exe
 
 # Compiled TypeScript files in src directories
 packages/*/src/**/*.js

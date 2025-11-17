@@ -13,10 +13,20 @@
   "keywords": [
     "solidity",
     "compiler",
-    "dag"
+    "dag",
+    "blockdag"
   ],
   "author": "DagDev Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/virtualconnekt/dag-dev.git",
+    "directory": "packages/compiler"
+  },
+  "bugs": {
+    "url": "https://github.com/virtualconnekt/dag-dev/issues"
+  },
+  "homepage": "https://github.com/virtualconnekt/dag-dev#readme",
   "dependencies": {
     "solc": "^0.8.30"
   },
