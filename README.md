@@ -4,7 +4,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node: 18+](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
-[![Release: v1.0.0](https://img.shields.io/badge/release-v1.0.0-blue)](https://github.com/virtualconnekt/dag-dev/releases)
+[![Release: v1.0.5](https://img.shields.io/badge/release-v1.0.5-blue)](https://github.com/virtualconnekt/dag-dev/releases)
+[![npm version](https://img.shields.io/npm/v/dagdev.svg)](https://www.npmjs.com/package/dagdev)
 
 ## 🌟 What is DagDev?
 
@@ -25,7 +26,43 @@ DagDev is a comprehensive development environment for BlockDAG networks, bringin
 
 ## 📦 Installation
 
-### Option 1: Standalone Executables (Recommended - No Node.js Required!)
+### Option 1: npm/npx (Quickest - Recommended!)
+
+Perfect for developers with Node.js installed (v18+).
+
+#### Global Installation
+```bash
+# Install globally
+npm install -g dagdev
+
+# Verify installation
+dagdev --version  # Should show v1.0.5+
+
+# Create a new project
+dagdev init my-project
+```
+
+#### Using npx (No Installation Needed)
+```bash
+# Use directly without installing
+npx dagdev@latest init my-project
+cd my-project
+npx dagdev@latest compile
+npx dagdev@latest run scripts/deploy.js --network bdagTestnet
+```
+
+#### Local Project Installation
+```bash
+# Install in your project
+npm install --save-dev dagdev
+
+# Use via npx
+npx dagdev compile
+```
+
+**npm Package:** https://www.npmjs.com/package/dagdev
+
+### Option 2: Standalone Executables (No Node.js Required!)
 
 Perfect for users who don't have Node.js installed or want a simple installation.
 
