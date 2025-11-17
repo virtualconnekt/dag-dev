@@ -26,9 +26,34 @@ DagDev is a comprehensive development environment for BlockDAG networks, bringin
 
 ## 📦 Installation
 
+### ⚙️ Prerequisites
+
+**Node.js 18 or higher is required.**
+
+Check your Node.js version:
+```bash
+node --version  # Should show v18.0.0 or higher
+```
+
+**Don't have Node.js 18+?** Download it from:
+- **Official Website**: https://nodejs.org (LTS recommended)
+- **Windows**: Use the installer from nodejs.org
+- **macOS**: `brew install node@18` or download from nodejs.org
+- **Linux**: 
+  ```bash
+  # Ubuntu/Debian
+  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+  
+  # Or use nvm (recommended)
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+  nvm install 18
+  nvm use 18
+  ```
+
 ### Option 1: npm/npx (Quickest - Recommended!)
 
-Perfect for developers with Node.js installed (v18+).
+Perfect for developers with Node.js 18+ installed.
 
 #### Global Installation
 ```bash
