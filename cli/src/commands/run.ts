@@ -81,7 +81,8 @@ export async function runCommand(
     spinner.start(`Checking connection to ${networkName} network...`);
     
     try {
-      const response = await fetch(networkConfig.url || 'http://localhost:8545', {
+      const rpcUrl = networkConfig.url || networkConfig.rpcUrl || 'http://localhost:8545';
+      const response = await fetch(rpcUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
