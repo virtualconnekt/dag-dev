@@ -418,16 +418,24 @@ export class RPCNodeClient {
       }]);
     }
 
-    // Wait for receipt
+    // Wait for receipt (increased timeout for slow testnets)
     let receipt = null;
-    for (let i = 0; i < 50; i++) {
+    const maxAttempts = 120; // 120 attempts × 1000ms = 2 minutes
+    for (let i = 0; i < maxAttempts; i++) {
       receipt = await this.rpc('eth_getTransactionReceipt', [txHash]);
       if (receipt) break;
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second between attempts
     }
 
     if (!receipt) {
-      throw new Error('Transaction receipt not found');
+      // Return partial result with transaction hash even if receipt not found
+      console.warn(`⚠️  Receipt not found after ${maxAttempts} seconds, but transaction was submitted`);
+      return {
+        address: null,
+        transactionHash: txHash,
+        gasUsed: null,
+        status: 'pending'
+      };
     }
 
     return {
