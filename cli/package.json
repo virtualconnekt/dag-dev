@@ -1,6 +1,6 @@
 {
   "name": "dagdev",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "CLI tool for DagDev - Hardhat for BlockDAG Networks",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -55,7 +55,7 @@
   "dependencies": {
     "@dagdev/compiler": "^1.0.0",
     "@dagdev/config": "^1.0.0",
-    "@dagdev/core": "^1.0.0",
+    "@dagdev/core": "^1.0.1",
     "@dagdev/runtime": "^1.0.1",
     "chalk": "^4.1.2",
     "commander": "^11.0.0",

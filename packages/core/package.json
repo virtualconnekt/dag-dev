@@ -1,6 +1,6 @@
 {
   "name": "@dagdev/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Core DAG simulator and node implementation for DagDev",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

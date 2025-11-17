@@ -107,7 +107,7 @@ export class RPCServer {
     this.node = node;
     this.config = {
       port: config.port ?? 8545,
-      host: config.host ?? 'localhost',
+      host: config.host ?? '0.0.0.0',
       cors: config.cors ?? true,
     };
     

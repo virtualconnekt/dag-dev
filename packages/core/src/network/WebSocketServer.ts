@@ -44,7 +44,7 @@ export class WebSocketServer {
     this.node = node;
     this.config = {
       port: config.port ?? 8546,
-      host: config.host ?? 'localhost',
+      host: config.host ?? '0.0.0.0',
       path: config.path ?? '/ws',
     };
     
