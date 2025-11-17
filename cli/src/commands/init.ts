@@ -352,24 +352,9 @@ async function main(dagRuntime) {
   await dagRuntime.mining.waitForBlocks(3);
   console.log('✅ Confirmed in blue set!\\n');
 
-  // Test the contract
-  console.log('🧪 Testing contract...');
-  const tx = await dagRuntime.evm.sendTransaction({
-    from: deployer,
-    to: result.address,
-    data: '0x6057361d0000000000000000000000000000000000000000000000000000000000000045', // store(69)
-    gasLimit: 100000
-  });
-  console.log('📝 Stored value 69, tx:', tx.hash);
-
-  await dagRuntime.mining.waitForBlocks(1);
-  
-  const value = await dagRuntime.evm.call({
-    to: result.address,
-    data: '0x2e64cec1' // retrieve()
-  });
-  console.log('📖 Retrieved value:', parseInt(value, 16));
-  console.log('\\n✨ Deployment complete!');
+  console.log('✨ Deployment complete!\\n');
+  console.log('📝 Contract address:', result.address);
+  console.log('� Transaction hash:', result.transactionHash);
 }
 
 // Export for dagdev run command
