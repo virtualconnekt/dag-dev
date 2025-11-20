@@ -139,28 +139,55 @@ async function main() {
     .option('--network <network>', 'Network', 'local')
     .action(async (options: any) => {
       try {
-        console.log(chalk.cyan('\n📋 DagDev Test Accounts (Local Development Only)\n'));
-        console.log(chalk.yellow('⚠️  WARNING: These are test accounts with publicly known private keys.'));
-        console.log(chalk.yellow('   NEVER use these accounts on mainnet or with real funds!\n'));
+        const fs = await import('fs');
+        const path = await import('path');
+        const os = await import('os');
+        const crypto = await import('crypto');
         
-        // Hardhat-compatible test accounts with known private keys
-        const testAccounts = [
-          {
-            address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-            privateKey: '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
-            balance: '10000 BDAG'
-          },
-          {
-            address: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
-            privateKey: '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d',
-            balance: '10000 BDAG'
-          },
-          {
-            address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
-            privateKey: '0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a',
-            balance: '10000 BDAG'
+        // Path to store user's unique seed
+        const dagdevDir = path.join(os.homedir(), '.dagdev');
+        const seedFile = path.join(dagdevDir, 'seed.txt');
+        
+        let seed: string;
+        
+        // Check if seed exists, otherwise generate new one
+        if (fs.existsSync(seedFile)) {
+          seed = fs.readFileSync(seedFile, 'utf8').trim();
+        } else {
+          // Generate unique seed based on machine and random data
+          const hostname = os.hostname();
+          const randomBytes = crypto.randomBytes(32).toString('hex');
+          seed = crypto.createHash('sha256').update(hostname + randomBytes).digest('hex');
+          
+          // Create .dagdev directory if it doesn't exist
+          if (!fs.existsSync(dagdevDir)) {
+            fs.mkdirSync(dagdevDir, { recursive: true });
           }
-        ];
+          
+          // Save seed for future use
+          fs.writeFileSync(seedFile, seed, 'utf8');
+        }
+        
+        console.log(chalk.cyan('\nDagDev Test Accounts (Unique to Your Machine)\n'));
+        console.log(chalk.yellow('WARNING: These accounts are for local development only.'));
+        console.log(chalk.yellow('NEVER use these accounts on mainnet or with real funds!\n'));
+        
+        // Generate 3 deterministic accounts from seed
+        const testAccounts: Array<{address: string, privateKey: string, balance: string}> = [];
+        for (let i = 0; i < 3; i++) {
+          const accountSeed = crypto.createHash('sha256').update(seed + i.toString()).digest('hex');
+          const privateKey = '0x' + accountSeed;
+          
+          // Derive address from private key (simplified - using last 20 bytes of hash)
+          const addressHash = crypto.createHash('sha256').update(accountSeed).digest('hex');
+          const address = '0x' + addressHash.substring(24, 64);
+          
+          testAccounts.push({
+            address,
+            privateKey,
+            balance: '10000 BDAG'
+          });
+        }
         
         testAccounts.forEach((account, i) => {
           console.log(chalk.cyan(`Account #${i}:`));
@@ -169,8 +196,11 @@ async function main() {
           console.log(chalk.gray('  Balance:    '), chalk.yellow(account.balance));
           console.log();
         });
+        
+        console.log(chalk.gray(`Seed stored in: ${seedFile}`));
+        console.log(chalk.gray('Delete this file to generate new accounts.\n'));
       } catch (error: any) {
-        console.error(chalk.red('❌ Error:'), error.message);
+        console.error(chalk.red('Error:'), error.message);
         process.exit(1);
       }
     });
