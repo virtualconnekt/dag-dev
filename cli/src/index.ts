@@ -135,21 +135,40 @@ async function main() {
   // dagdev accounts
   program
     .command('accounts')
-    .description('List available test accounts')
+    .description('List available test accounts with private keys')
     .option('--network <network>', 'Network', 'local')
     .action(async (options: any) => {
       try {
-        console.log(chalk.cyan('\n📋 Test Accounts:\n'));
-        // Generate some test accounts
-        const accounts = [
-          '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb1',
-          '0x5AEDA56215b167893e80B4fE645BA6d5Bab767DE',
-          '0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1',
+        console.log(chalk.cyan('\n📋 DagDev Test Accounts (Local Development Only)\n'));
+        console.log(chalk.yellow('⚠️  WARNING: These are test accounts with publicly known private keys.'));
+        console.log(chalk.yellow('   NEVER use these accounts on mainnet or with real funds!\n'));
+        
+        // Hardhat-compatible test accounts with known private keys
+        const testAccounts = [
+          {
+            address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+            privateKey: '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
+            balance: '10000 BDAG'
+          },
+          {
+            address: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+            privateKey: '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d',
+            balance: '10000 BDAG'
+          },
+          {
+            address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
+            privateKey: '0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a',
+            balance: '10000 BDAG'
+          }
         ];
-        accounts.forEach((addr, i) => {
-          console.log(chalk.gray(`Account ${i}:`), chalk.white(addr));
+        
+        testAccounts.forEach((account, i) => {
+          console.log(chalk.cyan(`Account #${i}:`));
+          console.log(chalk.gray('  Address:    '), chalk.white(account.address));
+          console.log(chalk.gray('  Private Key:'), chalk.green(account.privateKey));
+          console.log(chalk.gray('  Balance:    '), chalk.yellow(account.balance));
+          console.log();
         });
-        console.log(chalk.gray('\n💡 Tip: Use these addresses for testing\n'));
       } catch (error: any) {
         console.error(chalk.red('❌ Error:'), error.message);
         process.exit(1);
