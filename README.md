@@ -9,7 +9,7 @@
 
 ## 🌟 What is DagDev?
 
-DagDev is a comprehensive development environment for BlockDAG networks, bringing the power and ease of Hardhat to DAG-based blockchains. Build, test, and deploy smart contracts on parallel block structures with real-time visualization and GHOSTDAG consensus.
+DagDev is a comprehensive development environment for BlockDAG networks, bringing the power and ease of Hardhat to DAG-based blockchains. Build, test, and deploy smart contracts on parallel block structures with real-time visualization.
 
 ### ✨ Key Features
 
